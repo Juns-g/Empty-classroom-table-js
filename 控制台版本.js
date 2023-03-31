@@ -1,3 +1,5 @@
+// @version      1.0
+
 // 添加button,以及样式
 //#region
 const button = document.createElement("button");
