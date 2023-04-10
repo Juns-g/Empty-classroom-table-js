@@ -5,7 +5,7 @@
 油猴脚本地址：[空教室表 (greasyfork.org)](https://greasyfork.org/zh-CN/scripts/462970-空教室表)
 
 
-GitHub地址：[L-H-X/Empty-classroom-table-js (github.com)](https://github.com/L-H-X/Empty-classroom-table-js)
+GitHub地址：[Juns-g/Empty-classroom-table-js (github.com)](https://github.com/Juns-g/Empty-classroom-table-js)
 
 
 
