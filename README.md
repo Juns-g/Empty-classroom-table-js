@@ -1,5 +1,9 @@
 # 东秦获取空教室表的js脚本
 
+## 科技楼空教室表
+
+油猴地址：[科技楼空教室表](https://greasyfork.org/zh-CN/scripts/463892-%E7%A7%91%E6%8A%80%E6%A5%BC%E7%A9%BA%E6%95%99%E5%AE%A4%E8%A1%A8)
+
 ## 地址
 
 油猴脚本地址：[空教室表 (greasyfork.org)](https://greasyfork.org/zh-CN/scripts/462970-空教室表)
