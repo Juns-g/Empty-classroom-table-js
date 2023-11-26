@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         空教室表
 // @namespace    http://tampermonkey.net/
-// @version      2.0
+// @version      2.1
 // @description  用于获取东秦空教室表的js脚本
 // @author       Juns
 // @match        *://jwxt.neuq.edu.cn*
@@ -200,7 +200,7 @@
   // type 0 今天, 1 明天
   function getTitle(type) {
     const { date, week } = type === 0 ? getToday() : getTomorrow();
-    titleDate = date.replace(/-/g, ".");
+    const titleDate = date.replace(/-/g, ".");
     return `${titleDate} 周${week}`;
   }
 

@@ -1,4 +1,4 @@
-// @version      2.0
+// @version      2.1
 
 // 设置查询参数
 const options = [
@@ -182,7 +182,7 @@ function delayMs(ms) {
 // type 0 今天, 1 明天
 function getTitle(type) {
   const { date, week } = type === 0 ? getToday() : getTomorrow();
-  titleDate = date.replace(/-/g, ".");
+  const titleDate = date.replace(/-/g, ".");
   return `${titleDate} 周${week}`;
 }
 
