@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         空教室表
 // @namespace    http://tampermonkey.net/
-// @version      1.0
+// @version      2.0
 // @description  用于获取东秦空教室表的js脚本
 // @author       Juns
 // @match        *://jwxt.neuq.edu.cn*
@@ -17,67 +17,74 @@
 (function () {
   "use strict";
 
-  // 添加button,以及样式
-  //#region
-  const button = document.createElement("button");
-  button.innerText = "1111";
-  button.style.position = "absolute";
-  button.style.bottom = "20px";
-  button.style.right = "20px";
-  button.innerText = "点击获取空教室表";
-  button.style.setProperty("--color", "#560bad");
-  button.style.fontFamily = "inherit";
-  button.style.display = "inline-block";
-  button.style.width = "9em";
-  button.style.height = "2.6em";
-  button.style.lineHeight = "2.5em";
-  button.style.margin = "20px";
-  button.style.overflow = "hidden";
-  button.style.border = "2px solid var(--color)";
-  button.style.transition = "color .5s";
-  button.style.zIndex = "3";
-  button.style.fontSize = "17px";
-  button.style.borderRadius = "6px";
-  button.style.fontWeight = "500";
-  button.style.color = "var(--color)";
-  button.style.backgroundColor = "#fff";
-  const before = document.createElement("div");
-  before.style.content = '""';
-  before.style.position = "absolute";
-  before.style.zIndex = "-1";
-  before.style.background = "var(--color)";
-  before.style.height = "150px";
-  before.style.width = "200px";
-  before.style.borderRadius = "50%";
-  button.appendChild(before);
-  before.style.top = "100%";
-  before.style.left = "100%";
-  before.style.transition = "all .7s";
-  button.addEventListener("mouseover", () => {
-    before.style.top = "-30px";
-    before.style.left = "-30px";
-    button.style.color = "#f2f5f7";
-  });
-  button.addEventListener("mouseout", () => {
-    before.style.top = "100%";
-    before.style.left = "100%";
-    button.style.color = "var(--color)";
-  });
-  button.addEventListener("mousedown", () => {
-    button.style.setProperty("--color", "#3a0ca3");
-    before.style.background = "#3a0ca3";
-    before.style.transition = "background 0s";
-  });
-  button.addEventListener("mouseup", () => {
-    button.style.setProperty("--color", "#560bad");
-    before.style.background = "var(--color)";
-    before.style.transition = "background .7s";
-  });
-  document.body.appendChild(button);
-  //#endregion
+  // 设置查询参数
+  const options = [
+    { start: 1, end: 2 },
+    { start: 3, end: 4 },
+    { start: 5, end: 6 },
+    { start: 7, end: 8 },
+    { start: 9, end: 10 },
+    { start: 1, end: 8 },
+  ];
 
-  let emptyClassroomString = ""; //空教室表的字符串
-  let str = "";
+  const weekNameArr = ["日", "一", "二", "三", "四", "五", "六"];
+
+  const pageUrl = "http://jwxt.neuq.edu.cn/eams/classroom/apply/free.action";
+
+  // 定义样式
+  const boxStyles = {
+    position: "absolute",
+    bottom: "20px",
+    right: "20px",
+    display: "flex",
+    gap: "10px",
+  };
+
+  const buttonStyles = {
+    border: "none",
+    borderRadius: "20px",
+    background: "linear-gradient(32deg,#03a9f4,#f441a5,#ffeb3b,#03a9f4)",
+    transition: "all 1.5s ease",
+    fontWeight: "bold",
+    letterSpacing: "0.05rem",
+    padding: "0",
+    cursor: "pointer",
+    height: "40px",
+  };
+
+  const spanStyles = {
+    padding: "15px 18px",
+    fontSize: "17px",
+    borderRadius: "20px",
+    background: "#ffffff10",
+    color: "#ffffff",
+    transition: "0.4s ease-in-out",
+    transitionProperty: "color",
+    height: "100%",
+    width: "100%",
+  };
+
+  const textStyles = {
+    fontSize: "17px",
+    borderRadius: "20px",
+    background: "#f5f5f5",
+    padding: "1.8rem",
+    transition: "0.5s ease-out",
+    overflow: "visible",
+    position: "absolute",
+    top: "20px",
+    left: "20px",
+    cursor: "pointer",
+    backgroundColor: "rgba(255, 255, 255, 0.25)",
+    backdropFilter: "blur(6px)",
+    border: "1px solid rgba(255, 255, 255, 0.18)",
+    boxShadow: "rgba(142, 142, 142, 0.19) 0px 6px 15px 0px",
+  };
+
+  // 补零
+  function pad(time) {
+    return time < 10 ? `0${time}` : time;
+  }
 
   // 时间戳转时间函数
   function timestampToTime(timestamp) {
@@ -95,209 +102,207 @@
     return Y + M + D + h + m;
   }
 
-  let timeStamp = Date.now(); //现在的时间戳
-  let emptyClassroomTableExportTime = timestampToTime(timeStamp);
-  // timeStamp += 8 * 60 * 60 * 1000; //东八区的时间戳
-  timeStamp += 24 * 60 * 60 * 1000; // ! 下一天的时间戳
-  // !如果要获取今天的空教室表就注释掉上面这一行
-  let date = new Date(timeStamp); //对应的时间
-  let yyy = date.getFullYear();
-  let mmm = date.getMonth() + 1; //从0开始
-  let ddd = date.getDate(); //几号
-  let order = date.getDay(); //0是周日
+  function getToday() {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const week = weekNameArr[date.getDay()];
 
-  // 第一行显示年月日，周几
-  emptyClassroomString += `${yyy}.${mmm}.${ddd}日   周`;
-  let week = ["日", "一", "二", "三", "四", "五", "六"];
-  emptyClassroomString += week[order];
-  emptyClassroomString += "\n\n";
-
-  // 补零函数
-  function pad(time) {
-    return (time < 10 ? "0" : "") + time;
+    return { date: `${year}-${pad(month)}-${pad(day)}`, week };
   }
 
-  // 设置楼，时间，以及一些选项
-  function setOptions() {
+  function getTomorrow() {
+    const timeStamp = Date.now();
+    const tomorrow = new Date(timeStamp + 24 * 60 * 60 * 1000);
+    const year = tomorrow.getFullYear();
+    const month = tomorrow.getMonth() + 1;
+    const day = tomorrow.getDate();
+    const week = weekNameArr[tomorrow.getDay()];
+
+    return { date: `${year}-${pad(month)}-${pad(day)}`, week };
+  }
+
+  // 设置选项
+  // type: 0 今天, 1 明天
+  function setOptions(type) {
     let trs = document.querySelector("#actionForm").querySelectorAll("tr");
-    // console.log(trs[2]);
     let sel = trs[2].querySelector("select");
     sel.value = "1"; // 设置教学楼为工学馆
-    // console.log(trs[4]);
     let tds = trs[4].querySelectorAll("td");
-    // console.log(tds[1]);
-    let ins = tds[1].querySelectorAll("input");
-
-    ins[0].value = `${yyy}-${pad(mmm)}-${pad(ddd)}`;
-    ins[1].value = `${yyy}-${pad(mmm)}-${pad(ddd)}`;
-    // 2023.2.28日:好像格式改了，改成了03/01这样的
-    // ins[0].value = `${yyy}-${mmm}-${ddd}`;
-    // ins[1].value = `${yyy}-${mmm}-${ddd}`;
+    let [startDate, endDate] = tds[1].querySelectorAll("input");
+    startDate.value = type === 0 ? getToday().date : getTomorrow().date;
+    endDate.value = type === 0 ? getToday().date : getTomorrow().date;
   }
 
-  //点击查询按钮
-  function btnClick() {
+  // 点击查询按钮
+  function query() {
     let trs = document.querySelector("#actionForm").querySelectorAll("tr");
-    // console.log(trs[5]);
-    let btn = trs[5].querySelector("input");
-    // console.log(btn);
-    btn.click();
+    let queryButton = trs[5].querySelector("input");
+    queryButton.click();
   }
 
-  //替换汉字函数
-  function RemoveChinese(strValue) {
-    if (strValue != null && strValue != "") {
+  // 替换的函数
+  function formatData(str) {
+    if (str != null && str != "") {
       let reg = /工[ ]*学[ ]*馆/;
       let reg2 = /具体安排以开课部门通知为准\s*/g;
-      return strValue.replace(reg, "G").replace(reg2, "");
+      return str.replace(reg, "G").replace(reg2, "");
       //把工学馆三个字替换成G
-    } else return "";
+    }
+    return "";
+  }
+
+  // 根据rooms数组获得string
+  function roomsToString(rooms) {
+    let str = "";
+
+    rooms.forEach((item, index) => {
+      // 形式类似于104-1的直接省略了
+      if (index < 1 || rooms[index][4] === "-") return;
+      if (rooms[index][1] != rooms[index - 1][1]) str += "\n";
+      str += rooms[index] + " ";
+    });
+    return str;
   }
 
   // 获取当前表格内的数据
   function getClassroomString() {
-    let rows = document
+    const rows = document
       .querySelector("#grid15320024301_data")
       .querySelectorAll("td"); // 获取表格数据
-    // console.log(rows);
-    // console.log(rows[1]);
-    let t = []; //存储数据
+    let rooms = []; //存储数据
     for (let i = 1; i < rows.length; i += 6) {
-      let x = RemoveChinese(rows[i].innerText);
-      t.push(x);
-      // t.push(rows[i].innerText);
+      rooms.push(formatData(rows[i].innerText));
     }
 
-    t.sort(); //升序排序
-    str = "";
-    for (let i = 0; i < t.length; i++) {
-      //对数据进行换行处理
-      if (i >= 1) {
-        if (t[i][1] != t[i - 1][1]) str += "\n";
-      }
-      if (t[i][4] != "-") str += t[i] + " "; //形式类似于104-1的直接省略了
-    }
-    console.log(str);
-    emptyClassroomString += str; //s是之后的总的字符串
+    // 升序排序并去空
+    rooms = rooms.filter((item) => item !== "");
+    rooms.sort();
+
+    return roomsToString(rooms);
   }
 
-  // 查询a-b小节的空教室
-  function emptyClassroomQuery(a, b) {
-    let x = document
+  // 设置a-b小节
+  function queryClassroom(a, b) {
+    let [start, end] = document
       .querySelector("#roomApplyTimeTypeTd")
       .querySelectorAll("input"); // 获取dom
-    x[0].value = a;
-    x[1].value = b;
-    btnClick();
-    console.log(a + "-" + b + "节：");
-    setTimeout(getClassroomString, 1000); //设置延时1s
-    emptyClassroomString = emptyClassroomString + a + "-" + b + "节：\n";
+    start.value = a;
+    end.value = b;
   }
 
-  //todo 之后用异步重构一下，现在能跑就不管了吧😂
-  function f(time) {
-    setOptions();
-    if (time > 6000) {
-      return;
-    } else {
-      setTimeout(() => {
-        time += 1000; //每次间隔1s
-        // console.log(time);
-        if (time == 1000) {
-          emptyClassroomQuery(1, 2);
-          button.innerText = "正在查询...";
-          button.addEventListener("mouseover", () => {
-            button.style.color = "#6f42c1";
-          });
-        }
-        if (time == 2000) {
-          emptyClassroomString = emptyClassroomString + "\n\n";
-          emptyClassroomQuery(3, 4);
-        }
-        if (time == 3000) {
-          emptyClassroomString = emptyClassroomString + "\n\n";
-          emptyClassroomQuery(5, 6);
-        }
-        if (time == 4000) {
-          emptyClassroomString = emptyClassroomString + "\n\n";
-          emptyClassroomQuery(7, 8);
-        }
-        if (time == 5000) {
-          emptyClassroomString = emptyClassroomString + "\n\n";
-          emptyClassroomQuery(9, 10);
-        }
-        if (time == 6000) {
-          emptyClassroomString = emptyClassroomString + "\n\n";
-          emptyClassroomQuery(1, 8);
-        }
-        if (time == 7000) {
-          const newS =
-            emptyClassroomString +
-            "\n\n——不洗碗工作室" +
-            "\n\n导出时间:" +
-            emptyClassroomTableExportTime;
-          console.log(newS);
-          button.innerText = "点击文本即复制";
-          showText(newS);
-          // console.log("——ACM技术部");
-        }
-        f(time);
-      }, time);
+  function delayMs(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  // 获取标题
+  // type 0 今天, 1 明天
+  function getTitle(type) {
+    const { date, week } = type === 0 ? getToday() : getTomorrow();
+    titleDate = date.replace(/-/g, ".");
+    return `${titleDate} 周${week}`;
+  }
+
+  // 不在页面的话就跳转
+  function jumpToPage() {
+    if (window.location.href !== pageUrl) {
+      window.location = pageUrl;
     }
   }
-  // f(0); //自动执行
 
-  button.addEventListener("click", () => {
-    if (
-      window.location.href !==
-      "http://jwxt.neuq.edu.cn/eams/classroom/apply/free.action"
-    ) {
-      window.location =
-        "http://jwxt.neuq.edu.cn/eams/classroom/apply/free.action";
-      f(0);
-    } else {
-      f(0);
+  // type 0 今天, 1 明天
+  async function autoGetClassroomTable(type = 1) {
+    jumpToPage();
+    setOptions(type);
+    let exportString = "";
+    exportString += getTitle(type);
+    exportString += "\n\n";
+    for (let i = 0; i < options.length; i++) {
+      const { start, end } = options[i];
+      queryClassroom(start, end);
+      query();
+      await delayMs(1000);
+      exportString += `${start}-${end}节：\n\n`;
+      exportString += getClassroomString();
+      exportString += "\n\n";
     }
-  });
-  // 文本框
-  function showText(emptyClassroomString) {
+    exportString += "\n\n ——不洗碗工作室";
+    exportString += `\n\n 导出时间: ${timestampToTime(Date.now())}`;
+    exportString += "\n\n code by Juns";
+    console.log(exportString);
+    showText(exportString);
+  }
+
+  // 添加button,以及样式
+  function addButtons() {
+    const todayButton = document.createElement("button");
+    const tomorrowButton = document.createElement("button");
+
+    const todaySpan = document.createElement("span");
+    const tomorrowSpan = document.createElement("span");
+    todaySpan.innerText = "今天";
+    tomorrowSpan.innerText = "明天";
+    todayButton.appendChild(todaySpan);
+    tomorrowButton.appendChild(tomorrowSpan);
+
+    Object.entries(spanStyles).forEach(([name, value]) => {
+      todaySpan.style[name] = value;
+      tomorrowSpan.style[name] = value;
+    });
+    Object.entries(buttonStyles).forEach(([name, value]) => {
+      todayButton.style[name] = value;
+      tomorrowButton.style[name] = value;
+    });
+
+    todayButton.addEventListener("click", () => {
+      autoGetClassroomTable(0);
+    });
+
+    tomorrowButton.addEventListener("click", () => {
+      autoGetClassroomTable(1);
+    });
+
+    const box = document.createElement("div");
+    box.appendChild(todayButton);
+    box.appendChild(tomorrowButton);
+    Object.entries(boxStyles).forEach(([name, value]) => {
+      box.style[name] = value;
+    });
+
+    document.body.appendChild(box);
+  }
+
+  // 展示结果的文本框
+  function showText(text) {
     const textDiv = document.createElement("div");
-    textDiv.style.fontSize = "17px";
-    textDiv.style.borderRadius = "20px";
-    textDiv.style.background = "#f5f5f5";
-    textDiv.style.padding = "1.8rem";
-    textDiv.style.transition = "0.5s ease-out";
-    textDiv.style.overflow = "visible";
-    textDiv.style.position = "absolute";
-    textDiv.style.top = "20px";
-    textDiv.style.left = "20px";
-    textDiv.style.cursor = "pointer";
-    textDiv.style.backgroundColor = "rgba(255, 255, 255, 0.25)";
-    textDiv.style.backdropFilter = "blur(6px)";
-    textDiv.style.border = "1px solid rgba(255, 255, 255, 0.18)";
-    textDiv.style.boxShadow = "rgba(142, 142, 142, 0.19) 0px 6px 15px 0px";
-    textDiv.innerText = emptyClassroomString;
+    Object.entries(textStyles).forEach(([name, value]) => {
+      textDiv.style[name] = value;
+    });
     textDiv.addEventListener("mouseover", () => {
       textDiv.style.borderColor = "#008bf8";
     });
     textDiv.addEventListener("mouseout", () => {
-      textDiv.style.border = "1px solid rgba(255, 255, 255, 0.18)";
-      textDiv.style.boxShadow = "rgba(142, 142, 142, 0.19) 0px 6px 15px 0px";
+      textDiv.style.border = textStyles.border;
     });
+
+    textDiv.innerText = text;
     textDiv.addEventListener("click", () => {
-      copyText(emptyClassroomString);
+      copyText(text);
       alert("已经复制到剪切板！");
     });
     document.body.appendChild(textDiv);
   }
 
-  function copyText(emptyClassroomString) {
-    let tempInput = document.createElement("textarea");
-    emptyClassroomString = emptyClassroomString.replace(/\n/g, "\r\n");
-    tempInput.value = emptyClassroomString;
-    document.body.appendChild(tempInput);
-    tempInput.select();
+  function copyText(text) {
+    let output = document.createElement("textarea");
+    const outputText = text.replace(/\n/g, "\r\n");
+    output.value = outputText;
+    document.body.appendChild(output);
+    output.select();
     document.execCommand("copy");
-    document.body.removeChild(tempInput);
+    document.body.removeChild(output);
   }
+
+  addButtons();
 })();
