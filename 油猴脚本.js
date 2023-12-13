@@ -1,14 +1,18 @@
 // ==UserScript==
 // @name         空教室表
 // @namespace    http://tampermonkey.net/
-// @version      2.1
+// @version      2.2
 // @description  用于获取东秦空教室表的js脚本
 // @author       Juns
 // @match        *://jwxt.neuq.edu.cn*
 // @match        http://jwxt.neuq.edu.cn/eams/homeExt.action
+// @match        https://jwxt.neuq.edu.cn/eams/homeExt.action
 // @match        http://jwxt.neuq.edu.cn/eams/homeExt.action*
+// @match        https://jwxt.neuq.edu.cn/eams/homeExt.action*
 // @match        http://jwxt.neuq.edu.cn/eams/classroom/apply/free!search.action
+// @match        https://jwxt.neuq.edu.cn/eams/classroom/apply/free!search.action
 // @match        http://jwxt.neuq.edu.cn/eams/classroom/apply/free.action
+// @match        https://jwxt.neuq.edu.cn/eams/classroom/apply/free.action
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=neuq.edu.cn
 // @grant        none
 // @license      MIT
