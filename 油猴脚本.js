@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         空教室表
 // @namespace    http://tampermonkey.net/
-// @version      2.2
+// @version      2.3
 // @description  用于获取东秦空教室表的js脚本
 // @author       Juns
 // @match        *://jwxt.neuq.edu.cn*
@@ -33,7 +33,7 @@
 
   const weekNameArr = ["日", "一", "二", "三", "四", "五", "六"];
 
-  const pageUrl = "http://jwxt.neuq.edu.cn/eams/classroom/apply/free.action";
+  const pageUrl = "https://jwxt.neuq.edu.cn/eams/classroom/apply/free.action";
 
   // 定义样式
   const boxStyles = {
