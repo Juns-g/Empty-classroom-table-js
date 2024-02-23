@@ -1,4 +1,4 @@
-# 东秦获取空教室表的js脚本
+# 东秦获取空教室表的 js 脚本
 
 ## 科技楼空教室表
 
@@ -8,16 +8,13 @@
 
 油猴脚本地址：[空教室表 (greasyfork.org)](https://greasyfork.org/zh-CN/scripts/462970-空教室表)
 
+GitHub 地址：[Juns-g/Empty-classroom-table-js (github.com)](https://github.com/Juns-g/Empty-classroom-table-js)
 
-GitHub地址：[Juns-g/Empty-classroom-table-js (github.com)](https://github.com/Juns-g/Empty-classroom-table-js)
-
-
-
-油猴的使用方式自行搜索，推荐使用edge浏览器，因为没有墙
+油猴的使用方式自行搜索，推荐使用 edge 浏览器，因为没有墙
 
 油猴地址：[ Tampermonkey](https://www.tampermonkey.net/)
 
-Edge的油猴拓展地址：[Tampermonkey - Microsoft Edge Addons](https://microsoftedge.microsoft.com/addons/detail/tampermonkey/iikmkjmpaadaobahmlepeloendndfphd)
+Edge 的油猴拓展地址：[Tampermonkey - Microsoft Edge Addons](https://microsoftedge.microsoft.com/addons/detail/tampermonkey/iikmkjmpaadaobahmlepeloendndfphd)
 
 ## 使用方法
 
